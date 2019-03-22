@@ -1,5 +1,6 @@
 
 import os
+import random
 
 
 
@@ -9,13 +10,6 @@ class SentenceGenerator:
 	"""
 
 	def __init__(self, template_dir):
-		"""
-		Constructor
-
-		@Params
-		template_dir : Directory containing templates
-		"""
-
 		self._template_dir = template_dir
 		self._wordlists = {}
 
@@ -23,10 +17,6 @@ class SentenceGenerator:
 
 
 	def build_wordlists(self):
-		"""
-		Builds the wordlists using the template dir
-		"""
-
 		# Clear existing wordlists
 		self._wordlists = {}
 
@@ -41,6 +31,44 @@ class SentenceGenerator:
 			wordlist = WordList(full_path)
 			self._wordlists[wordlist.name] = wordlist
 
+
+	def generate_sentence(self):
+		# Start with the base sentence
+		sentence = "%{}%".format("base")
+
+		# Keep updating the sentence by replacing %xxx% with a word from
+		# the dictionary called xxx until there are no more %xxx%s.
+		still_updating = True
+		while still_updating:
+			still_updating = False
+			for wordlist in self._wordlists.values():
+				while "%{}%".format(wordlist.name) in sentence:
+					still_updating = True
+
+					# Just replace one occurance so not everything is
+					# the same phrase
+					sentence = sentence.replace("%{}%".format(wordlist.name),
+						wordlist.choose(), 1)
+
+		# We wrap actual words with |s so it's easier to format them.
+
+		# Fixing the hashtags
+		words = []
+		for word in sentence.split("||"):
+			# If the "word" is a hashtag, we want to make it such that
+			# it's valid (remove spaces or dashes)
+			if word.startswith("#"):
+				word = word.replace(" ", "")
+				word = word.replace("-", "")
+
+			words.append(word)
+		sentence = "||".join(words)
+
+		# Removing the formatting helper characters
+		sentence = sentence.replace("%nul%", "")
+		sentence = sentence.replace("||", " ").replace("|", "")
+
+		return sentence.strip()
 
 
 class WordList:
@@ -73,3 +101,15 @@ class WordList:
 			for line in stream:
 				if line.rstrip():
 					self._words.append(line.rstrip())
+
+
+	def choose(self):
+		return random.choice(self._words)
+
+
+def main():
+	s = SentenceGenerator("Words")
+	print(s.generate_sentence())
+
+if __name__ == "__main__":
+	main()

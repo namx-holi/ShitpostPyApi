@@ -1,6 +1,12 @@
+# Ignore anything in words except example
 Words/*
+!Words/example.txt
+
+# Ignore compiled files
 *.pyc
-*.zip
+
+# Ignore sublime files
 *.sublime-*
 
-!Words/example.txt
+# Ignore virtual environment
+venv

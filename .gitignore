@@ -1,0 +1,6 @@
+Words/*
+*.pyc
+*.zip
+*.sublime-*
+
+!Words/example.txt

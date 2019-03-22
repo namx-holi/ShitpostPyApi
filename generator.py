@@ -3,6 +3,42 @@ import os
 import random
 
 
+class WordList:
+	"""
+	A wordlist that allows getting random words
+	"""
+
+	@property
+	def name(self):
+		return self._name
+
+
+	def __init__(self, full_path):
+		self._full_path = full_path
+		self._words = []
+
+		# Name is the base filename without extension
+		directory, filename = os.path.split(full_path)
+		base_filename, ext = os.path.splitext(filename)
+		self._name = base_filename
+
+		self.refresh_words()
+
+
+	def refresh_words(self):
+		self._words = []
+		with open(self._full_path, "r") as stream:
+
+			# Store each non-empty line
+			for line in stream:
+				if line.rstrip():
+					self._words.append(line.rstrip())
+
+
+	def choose(self):
+		return random.choice(self._words)
+
+
 class SentenceGenerator:
 	"""
 	Generates sentences using templates
@@ -75,42 +111,6 @@ class SentenceGenerator:
 		for _ in range(n):
 			sentences.append(self.generate_sentence())
 		return sentences
-
-
-class WordList:
-	"""
-	A wordlist that allows getting random words
-	"""
-
-	@property
-	def name(self):
-		return self._name
-
-
-	def __init__(self, full_path):
-		self._full_path = full_path
-		self._words = []
-
-		# Name is the base filename without extension
-		directory, filename = os.path.split(full_path)
-		base_filename, ext = os.path.splitext(filename)
-		self._name = base_filename
-
-		self.refresh_words()
-
-
-	def refresh_words(self):
-		self._words = []
-		with open(self._full_path, "r") as stream:
-
-			# Store each non-empty line
-			for line in stream:
-				if line.rstrip():
-					self._words.append(line.rstrip())
-
-
-	def choose(self):
-		return random.choice(self._words)
 
 
 def main():

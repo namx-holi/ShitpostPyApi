@@ -3,7 +3,6 @@ import os
 import random
 
 
-
 class SentenceGenerator:
 	"""
 	Generates sentences using templates
@@ -71,6 +70,13 @@ class SentenceGenerator:
 		return sentence.strip()
 
 
+	def generate_sentences(self, n):
+		sentences = []
+		for _ in range(n):
+			sentences.append(self.generate_sentence())
+		return sentences
+
+
 class WordList:
 	"""
 	A wordlist that allows getting random words
@@ -109,7 +115,8 @@ class WordList:
 
 def main():
 	s = SentenceGenerator("Words")
-	print(s.generate_sentence())
+	print(s.generate_sentences(5))
+
 
 if __name__ == "__main__":
 	main()
